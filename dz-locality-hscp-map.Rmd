@@ -1,0 +1,16 @@
+---
+title: "Locality, DataZone, HSCP Map"
+output: html_document
+date: "2026-03-12"
+---
+
+
+## Map
+
+This map shows the borders of Datazone, Locality, and HSCP. This is based on new assignments of Data Zones to Localities provided by those in the respective Parternship.
+
+```{r}
+base_map
+```
+
+
