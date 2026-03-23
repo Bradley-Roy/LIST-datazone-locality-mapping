@@ -1,15 +1,71 @@
 ---
-title: "Locality, DataZone, HSCP Map"
-output: html_document
-date: "2026-03-12"
+title: "Data Zone & Locality Map: `r params$area`"
+output:
+  flexdashboard::flex_dashboard:
+    vertical_layout: scroll
+params:
+  area: "South Lanarkshire"
 ---
 
 
-## Map
+### Data Zone, Locality, HSCP Map
 
-This map shows the borders of Datazone, Locality, and HSCP. This is based on new assignments of Data Zones to Localities provided by those in the respective Parternship.
+This map shows the borders of Data Zone, Locality, and HSCP. This is based on new assignments of how Data Zones Localities provided by those in the respective Partnership.
+
+Of the 32 HSCPs, `r check_hscp` have returned their new lookup files.
+
+
+```{r, include = FALSE}
+
+  geo_datazone_filtered <- geo_datazone |> 
+    filter(hscp2019name == params$area)
+
+  locality_sf <- geo_datazone_filtered |>
+    group_by(hscp_locality) |>
+    summarise(do_union = TRUE) |>  
+    st_make_valid() |> 
+    ungroup()
+  
+  test_locality_sf <- locality_sf |> 
+    count(hscp_locality)
+  
+  hscp_sf <- geo_datazone_filtered |>
+    group_by(hscp2019, hscp2019name) |>
+    summarise(do_union = TRUE) |>   
+    st_make_valid()  |> 
+    ungroup()
+  
+  test_locality_sf <- hscp_sf |> 
+    count(hscp2019name)
+  
+  # print(hscp_sf)
+  
+```
+
+###
 
 ```{r}
+
+  base_map <- geo_datazone_filtered %>%
+    leaflet()  %>%
+    addProviderTiles(
+      providers$Esri.WorldTopoMap,
+      options = providerTileOptions(opacity = 0.5)
+    ) |>
+    addPolygons(data = locality_sf,
+                weight = 2.5,
+                fillColor = ~pal(hscp_locality),
+                color = ~pal(hscp_locality),
+                fillOpacity = 0.3
+    ) |>
+    addPolygons(data = geo_datazone_filtered, weight = 0.5, color = "black",
+                fillOpacity = 0, popup = ~glue("<br><b>HSCP</b>: {hscp2019name} (HSCP Code: {hscp2019})
+                                              <br>
+                                              <br><b>HSCP Locality</b>: {hscp_locality}
+                                              <br>
+                                              <br><b>DataZone Code</b>: {datazone2022}"),
+                highlightOptions = highlightOptions(color = 'white', weight = 3.5, bringToFront = TRUE))
+
 base_map
 ```
 
