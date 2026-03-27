@@ -8,11 +8,16 @@ params:
 ---
 
 
+Row
+-------------------------------------
+
 ### Data Zone, Locality, HSCP Map
 
-This map shows the borders of Data Zone, Locality, and HSCP. This is based on new assignments of how Data Zones Localities provided by those in the respective Partnership.
+This map shows the borders of Data Zone, Locality, and HSCP for `r params$area`. The borders of the localities are based on new assignments of Data Zones to these localities, provided by those in the Partnership.
 
-Of the 32 HSCPs, `r check_hscp` have returned their new lookup files.
+Hovering the mouse over the Data Zone will show which Locality it is currently assigned to. Clicking on this Data Zone will show the HSCP, Locality and Data Zone code. 
+
+<!-- Of the 32 HSCPs, `r check_hscp` have returned their new lookup files. -->
 
 
 ```{r, include = FALSE}
@@ -40,9 +45,30 @@ Of the 32 HSCPs, `r check_hscp` have returned their new lookup files.
   
   # print(hscp_sf)
   
+  
+pal <- colorFactor(
+  palette = c(
+    '#006d77',
+    '#C45454',
+    '#3e7730',
+    '#ff3b75',
+    '#F3BA2D',
+    '#1d568e',
+    '#31A845',
+    '#AA3EBD'),
+  domain = sort(unique(locality_sf$hscp_locality))
+)
+
+shp_data_filtered <- shp_data |> 
+    filter(hscp2019na == params$area)
+  
 ```
 
-###
+
+<!-- Row {data-height=1000} -->
+<!-- ------------------------------------- -->
+
+### {data-height=1000}
 
 ```{r}
 
@@ -58,13 +84,30 @@ Of the 32 HSCPs, `r check_hscp` have returned their new lookup files.
                 color = ~pal(hscp_locality),
                 fillOpacity = 0.3
     ) |>
+    #   addPolygons(data = shp_data_filtered,
+    #             weight = 2.5,
+    #             color = "black",
+    #             # fillColor = ~pal(hscp_locality),
+    #             # color = ~pal(hscp_locality),
+    #             fillOpacity = 0.3
+    # ) |>
     addPolygons(data = geo_datazone_filtered, weight = 0.5, color = "black",
-                fillOpacity = 0, popup = ~glue("<br><b>HSCP</b>: {hscp2019name} (HSCP Code: {hscp2019})
+                fillOpacity = 0,
+                popup = ~glue("<b><b>HSCP</b>: {hscp2019name} (HSCP Code: {hscp2019})
                                               <br>
                                               <br><b>HSCP Locality</b>: {hscp_locality}
                                               <br>
                                               <br><b>DataZone Code</b>: {datazone2022}"),
-                highlightOptions = highlightOptions(color = 'white', weight = 3.5, bringToFront = TRUE))
+                label = ~glue("Locality: {hscp_locality}"),
+                highlightOptions = highlightOptions(color = 'white', weight = 3.5, bringToFront = TRUE)) |>
+    addLegend(
+    data = locality_sf,
+    pal = pal,
+    values = ~hscp_locality,
+    position = "bottomleft",
+    title = "Locality Name:",
+    opacity = 0.9
+  ) 
 
 base_map
 ```
