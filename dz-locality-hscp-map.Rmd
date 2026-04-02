@@ -104,8 +104,9 @@ base_map |>
         # Groups will show in order they are set here
         overlayGroups = c("2022 Best-Fit Locality Boundary",
                           "True Locality Boundary",
-                          "2022 Datazone Boundary",
-                          "2011 Best-Fit Locality Boundary"),
+                          "2022 Datazone Boundary"#,
+                          #"2011 Best-Fit Locality Boundary"
+                          ),
         position = "topright",
         # set collapsed = FALSE so that controls always displayed
         options = layersControlOptions(collapsed = FALSE)
