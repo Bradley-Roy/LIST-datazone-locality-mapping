@@ -98,8 +98,6 @@ areas <- datazone2022_sf |>
   unique() |> 
   sort()
 
-areas <- "North Lanarkshire"
-
 # Create map for each HSCP 
 # Loop over all areas to create multiple dashboards, 1 for each HSCP
 purrr::walk(areas, function(a) {
