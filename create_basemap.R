@@ -62,9 +62,18 @@ datazone2022_sf <- datazone2022_sf |>
 
 proposed_locality_sf <- datazone2022_sf |>
   group_by(hscp2019,hscp2019name,proposed_locality) |>
-  summarise(do_union = TRUE) |>  
+  summarise(pop2022=sum(pop2022),do_union = TRUE) |>  
   st_make_valid() |> 
   ungroup()
+
+
+# 4. Attach Proposed Locality ----
+
+datazone2022_sf <- datazone2022_sf |>
+  left_join(dplyr::rename(st_drop_geometry(proposed_locality_sf),pop2022_proposed_locality=pop2022),
+            by=c("hscp2019","hscp2019name","proposed_locality")) |>
+  mutate(pop2022 = format(pop2022,big.mark=","),
+         pop2022_proposed_locality = format(pop2022_proposed_locality,big.mark=","))
 
 
 # Sidebar. Check Numbers ----

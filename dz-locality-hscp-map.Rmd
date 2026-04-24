@@ -85,10 +85,15 @@ base_map |>
                 color = "black",
                 fillOpacity = 0,
                 popup = ~glue("<b><b>HSCP</b>: {hscp2019name} (HSCP Code: {hscp2019})
-                                              <br>
-                                              <br><b>HSCP Locality</b>: {proposed_locality}
-                                              <br>
-                                              <br><b>DataZone Code</b>: {datazone2022}"),
+                               <br>
+                               <br><b>HSCP Locality</b>: {proposed_locality}
+                               <br>
+                               <br><b>2022 Census Population Of Proposed Locality</b>: {pop2022_proposed_locality}
+                               <br>
+                               <br><b>Datazone</b>: {datazone2022name} (Datazone Code: {datazone2022})
+                               <br>
+                               <br><b>2022 Census Population Of Datazone</b>: {pop2022}
+                              "),
                 label = ~glue("Locality: {proposed_locality}"),
                 highlightOptions = highlightOptions(color = 'white', weight = 3.5, bringToFront = TRUE)) |>
     addLegend(
