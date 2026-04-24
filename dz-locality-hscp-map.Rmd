@@ -58,6 +58,9 @@ pal <- colorFactor(
 
 ```{r}
 
+if (nrow(true_locality_boundaries_filtered) > 0){
+  
+  
 base_map |>
     addPolygons(data = proposed_locality_sf_filtered,
                 weight = 2.5,
@@ -66,12 +69,6 @@ base_map |>
                 fillOpacity = 0.3,
                 group = "2022 Best-Fit Locality Boundary"
     ) |>
-  # addPolygons(data = hscplocality2011_sf_filtered,
-  #               weight = 2.5,
-  #               color = "red",
-  #               fillOpacity = 0,
-  #               group = "2011 Best-Fit Locality Boundary"
-  #   ) |>
   
       addPolygons(data = true_locality_boundaries_filtered,
                 weight = 2.5,
@@ -109,13 +106,61 @@ base_map |>
         # Groups will show in order they are set here
         overlayGroups = c("2022 Best-Fit Locality Boundary",
                           "True Locality Boundary",
-                          "2022 Datazone Boundary"#,
-                          #"2011 Best-Fit Locality Boundary"
+                          "2022 Datazone Boundary"
                           ),
         position = "topright",
         # set collapsed = FALSE so that controls always displayed
         options = layersControlOptions(collapsed = FALSE)
       )
+  
+} else{
+  
+  base_map |>
+    addPolygons(data = proposed_locality_sf_filtered,
+                weight = 2.5,
+                fillColor = ~pal(proposed_locality),
+                color = ~pal(proposed_locality),
+                fillOpacity = 0.3,
+                group = "2022 Best-Fit Locality Boundary"
+    ) |>
+    addPolygons(data = datazone2022_sf_filtered, 
+                group = "2022 Datazone Boundary",
+                weight = 0.5, 
+                color = "black",
+                fillOpacity = 0,
+                popup = ~glue("<b><b>HSCP</b>: {hscp2019name} (HSCP Code: {hscp2019})
+                               <br>
+                               <br><b>HSCP Locality</b>: {proposed_locality}
+                               <br>
+                               <br><b>2022 Census Population Of Proposed Locality</b>: {pop2022_proposed_locality}
+                               <br>
+                               <br><b>Datazone</b>: {datazone2022name} (Datazone Code: {datazone2022})
+                               <br>
+                               <br><b>2022 Census Population Of Datazone</b>: {pop2022}
+                              "),
+                label = ~glue("Locality: {proposed_locality}"),
+                highlightOptions = highlightOptions(color = 'white', weight = 3.5, bringToFront = TRUE)) |>
+    addLegend(
+    data = proposed_locality_sf_filtered,
+    pal = pal,
+    values = ~proposed_locality,
+    position = "bottomleft",
+    title = "Locality Name:",
+    opacity = 0.9
+  ) |>
+  
+  addLayersControl(
+        # Groups will show in order they are set here
+        overlayGroups = c("2022 Best-Fit Locality Boundary",
+                          "2022 Datazone Boundary"),
+        position = "topright",
+        # set collapsed = FALSE so that controls always displayed
+        options = layersControlOptions(collapsed = FALSE)
+      )
+  
+  
+}
+
 
 ```
 
